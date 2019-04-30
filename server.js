@@ -5,7 +5,7 @@ const bodyParser = require("body-parser");
 
 const app = express();
 
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 /**
  * CONFIGURATIONS
@@ -28,25 +28,35 @@ var upload = multer({ storage: storage }).single("imageUpload");
 /**
  * Import Modules
  */
-const Media = require("./imageThumbnail.js");
+// const Media = require("./imageThumbnail.js");
+const createConnection = require("./mysql/createConnection.js");
+// const createDB = require("./mysql/createDB.js");
+// const createTable = require("./mysql/createTable.js");
+// const alterTable = require("./mysql/alterTable.js");
+const insertInto = require("./mysql/insertInto.js");
 
-// @Ratna
+/**
+ * MySQL Database Query Execution
+ */
+// let db = createConnection();
+// createDB();
+// createTable.property();
+// alterTable();
+// insertInto();
+
+//
+app.get("/", (req, res) => {
+  res.send(
+    "<h1>Welcome to Image Processing using NodeJS sharp and multer modules</h1>"
+  );
+});
+
 app.get("/thumbnail", function(req, res) {
   res.render("thumbnail");
 });
 
-// @Shawn
-app.get("/thumb", (req, res) => {
-  if (req.query.src) {
-    let image = new Media(req.query.src);
-    image.thumb(req, res);
-  } else {
-    res.sendStatus(403);
-  }
-});
-
 app.post("/thumbnail", upload, function(req, res, next) {
-  console.log(req.file);
+  //console.log(req.file);
 
   // configure sharp
   let width = 50;
@@ -66,17 +76,6 @@ app.post("/thumbnail", upload, function(req, res, next) {
       }
     });
 });
-
-// function imageMagick(picture.path) {
-//   .resize('250', '180', '^')
-// .gravity('center')
-// .extent(250, 180)
-// .write(picture.thumb_path, function (error) {
-//    if(error) console.log(error);
-
-// }
-
-// });
 
 app.listen(port, function() {
   console.log(`Server listening on port ${port}...`);
