@@ -5,7 +5,7 @@ const bodyParser = require("body-parser");
 
 const app = express();
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 8080;
 
 /**
  * CONFIGURATIONS
@@ -13,6 +13,9 @@ const port = process.env.PORT || 3000;
 app.set("view engine", "ejs"); // set view engine
 app.use(bodyParser.urlencoded({ extended: true })); // body-parser
 app.use(express.static(__dirname + "/public")); // css
+
+var imagePath = " ";
+var thumbnailPath = " ";
 
 var storage = multer.diskStorage({
   destination: function(req, file, cb) {
@@ -51,16 +54,29 @@ app.get("/", (req, res) => {
   );
 });
 
+app.get("/details", (req, res) => {
+  res.render("details", {
+    // img: imgPath,
+    thumbnail: thumbnailPath
+  });
+});
+
 app.get("/thumbnail", function(req, res) {
   res.render("thumbnail");
 });
 
 app.post("/thumbnail", upload, function(req, res, next) {
-  //console.log(req.file);
+  console.log(req.file);
+  console.log("Image location: " + "/uploads/" + req.file.originalname);
+  console.log(
+    "Thumbnail location: " + "/uploads/thumb/thumb_" + req.file.originalname
+  );
+  imagePath = "/uploads/" + req.file.originalname;
+  thumbnailPath = "/uploads/thumb/thumb_" + req.file.originalname;
 
   // configure sharp
-  let width = 50;
-  let height = 50;
+  let width = 64;
+  let height = 64;
 
   sharp(req.file.path)
     .resize(width, height)
@@ -69,8 +85,13 @@ app.post("/thumbnail", upload, function(req, res, next) {
     ) {
       if (!err) {
         console.log("sharp worked");
-        res.write("File uploaded successfully...");
-        res.end();
+        res.render("details", {
+          // img: imgPath,
+          thumbnail: thumbnailPath
+        });
+
+        // res.write("File uploaded successfully...");
+        // res.end();
       } else {
         console.log(err);
       }

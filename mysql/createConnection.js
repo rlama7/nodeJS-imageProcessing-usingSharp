@@ -11,12 +11,12 @@ const mysql = require("mysql");
 function createConnection() {
   // Create a database Connection
   let connection = mysql.createConnection({
-    // localhost
+    // // localhost
     host: "localhost",
     user: "root",
     password: "",
-    database:
-      "lamalist" /* uncomment it if creating database for the first time */
+    database: "listing"
+    //   "lamalist" /* uncomment it if creating database for the first time */
   });
 
   // Connect to MySQL
